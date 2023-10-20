@@ -53,7 +53,7 @@ const int pinConfig = 25;
 bool keyPressed = 0;
 String inputString;
 String inputInt;
-int countLoad = 13;
+int countLoad = 14;
 int statusReq;
 int jumIsi;
 int countReq_timeout = 0;
@@ -380,8 +380,8 @@ void hitungJarak()
   float delLat = abs(staticLat - latitude) * 111194.9;
   float delLong = 111194.9 * abs(staticLong - longitude) * cos(radians((staticLat + latitude) / 2));
   float distance = sqrt(pow(delLat, 2) + pow(delLong, 2));
-  Serial.print("Jarak : ");
-  Serial.println(distance, 3);
+  // Serial.print("Jarak : ");
+  // Serial.println(distance, 3);
   if ((distance > 0 && distance <= paramsDistance) && change == 0)
   {
     change = 1;
@@ -413,8 +413,8 @@ void loop()
   // serializeJson(dataLog, eepromStream);
   // eepromStream.flush();
 
-  Serial.print("kondisi Mikro : ");
-  Serial.println(statusKondisi);
+  // Serial.print("kondisi Mikro : ");
+  // Serial.println(statusKondisi);
   static uint32_t uptimeGPS_notif = millis();
   static uint32_t upTimebat = millis();
   static uint32_t outTime_now = millis();
@@ -774,11 +774,11 @@ void loop()
           statusReq = 7;
           jumIsi = 0;
           uplinkReq();
-          keyB = 0;
-          keyPressed = 0;
           inputString = ""; // clear input
           centerInput = 6;
           clearLCD = 0;
+          keyPressed = 0;
+          keyB = 0;
           keyReq = 1;
         }
       }
@@ -813,6 +813,7 @@ void loop()
 
     if (jumlahPesanan > 0)
     {
+      Serial.println("Jumlah pesanan > 0");
       if (clearLCD == 1)
       {
         lcd.clear();
@@ -828,10 +829,11 @@ void loop()
       lcd.print("[F1]    | Change");
 
       clearLCD = 0;
-      getKeyReq = 1;
       keyReq = 0;
       countReq = 0;
       keyB = 0;
+      delay(2000);
+      getKeyReq = 1;
     }
     else
     {
@@ -863,7 +865,7 @@ void loop()
           lcd.print("      ");
           countLoad = 14;
         }
-        if (countReq == 60 && jumlahPesanan == 0)
+        if (countReq == 65 && jumlahPesanan == 0)
         {
           Serial.println("Timeout Request, No Data");
           lcd.setCursor(0, 0);
@@ -874,6 +876,7 @@ void loop()
         {
           countReq = 0;
           timeout = 0;
+          getKeyReq = 0;
           resetFunc();
         }
       }
@@ -897,6 +900,7 @@ void loop()
     }
     if (key == 'N' && !changeVolume)
     {
+      Serial.println("Lompat ke baris ini");
       digitalWrite(GPSswitch, HIGH);
       delay(100);
       Serial.println("Enter");
