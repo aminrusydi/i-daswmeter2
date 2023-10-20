@@ -908,6 +908,10 @@ void loop()
       statusReq = 8;
       jumIsi = jumlahPesanan;
       uplinkReq();
+      delay(150);
+      uplinkReq();
+      delay(200);
+      uplinkReq();
       Serial.println("Confirm Pesanan");
       inputString = ""; // clear input
       centerInput = 6;
