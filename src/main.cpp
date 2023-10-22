@@ -100,6 +100,7 @@ bool emergency = 0;
 bool logicEmergency = 0;
 int countTime_End = 0;
 
+double requestID;
 float jumlahPesanan;
 int cyble;
 int countL;
@@ -174,6 +175,7 @@ void saveLog()
   dataLog["lf"] = cyble;
   dataLog["lat"] = latitude;
   dataLog["long"] = longitude;
+  dataLog["reqID"] = requestID;
   serializeJson(dataLog, eepromStream);
   eepromStream.flush();
 }
@@ -226,7 +228,7 @@ void readMicroSerial()
 {
   if (Serial1.available() > 0)
   {
-    StaticJsonDocument<250> doc;
+    StaticJsonDocument<300> doc;
     DeserializationError error = deserializeJson(doc, Serial1);
 
     if (error)
@@ -235,12 +237,13 @@ void readMicroSerial()
       Serial.println(error.c_str());
       return;
     }
-
+    double reqID = doc["reqID"];
     float req = doc["req"];   // "0000"
     int stan = doc["stan"];   // "0000"
     int count = doc["count"]; // "0000"
     int microStat = doc["microStat"];
 
+    requestID = reqID;
     cyble = stan;
     countL = count;
     jumlahPesanan = req;
@@ -297,10 +300,11 @@ void readMicroSerial()
 
 void uplinkReq()
 {
-  StaticJsonDocument<300> dataUp;
+  StaticJsonDocument<350> dataUp;
   location = String(latitude, 7) + "," + String(longitude, 7);
 
   dataUp["nodeID"] = idDevice;
+  dataUp["reqID"] = String(inputInt);
   dataUp["loc"] = location;
   dataUp["Batt"] = statBatt + "%";
   dataUp["status"] = String(statusReq);
@@ -311,10 +315,11 @@ void uplinkReq()
 
 void uplinkNotifGPS()
 {
-  StaticJsonDocument<300> dataUp;
+  StaticJsonDocument<350> dataUp;
   location = String(latitude, 7) + "," + String(longitude, 7);
 
   dataUp["nodeID"] = idDevice;
+  dataUp["reqID"] = String(requestID);
   dataUp["loc"] = location + "," + String(distanceGPS);
   dataUp["Batt"] = statBatt + "%";
   dataUp["status"] = String(statusReq);
@@ -325,10 +330,11 @@ void uplinkNotifGPS()
 
 void uplinkNotifBatt()
 {
-  StaticJsonDocument<300> dataUp;
+  StaticJsonDocument<350> dataUp;
   location = String(latitude, 7) + "," + String(longitude, 7);
 
   dataUp["nodeID"] = idDevice;
+  dataUp["reqID"] = String(requestID);
   dataUp["loc"] = location;
   dataUp["Batt"] = statBatt + "%";
   dataUp["status"] = String(statusReq);
@@ -908,10 +914,10 @@ void loop()
       statusReq = 8;
       jumIsi = jumlahPesanan;
       uplinkReq();
-      delay(150);
-      uplinkReq();
       delay(200);
-      uplinkReq();
+      // uplinkReq();
+      // delay(200);
+      // uplinkReq();
       Serial.println("Confirm Pesanan");
       inputString = ""; // clear input
       centerInput = 6;
