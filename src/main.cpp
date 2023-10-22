@@ -408,6 +408,7 @@ void loop()
   // dataLog["lf"] = 0;
   // dataLog["lat"] = latitude;
   // dataLog["long"] = longitude;
+  // doc["reqID"] = "0000000000";
   // serializeJson(dataLog, eepromStream);
   // eepromStream.flush();
 
